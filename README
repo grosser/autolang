@@ -1,0 +1,13 @@
+= Autolang
+ 
+== Overview
+ 
+Autolang is the beginning of a very simple rake task to help automate language translation for your Rails app.
+ 
+Uses gettext, hpricot and open-uri.
+ 
+== TODO
+
+Any help is appreciated.  This currently works well-enough for us but can be expanded to be much smarter.
+
+Fix the @cook_string@ and @reconstitute_string@ methods to handle strings like: _Application|Close_ and _ThisIsMyCamelCasedString_.  Currently the Google Translate engine will not translate camel cased strings and only grabs the first part of a pipe separated string.
