@@ -1,16 +1,25 @@
 = Autolang
- 
-== Goal
 
+== Goal
 Translate all your Gettext - msgids to another language using google-translate.
 
-== Usage
 
-L=es rake autolang:translate #to translate into spanish (=es)
+== Install
+Copy the rake task anywhere OR use git:
+git clone git://github.com/grosser/autolang.git
+
+
+== Usage
+#to translate into spanish (=es), when current apps name is myapp (from myapp.pot)
+L=es APP_NAME=myapp rake autolang:translate
+
+#use something other than the default po folder:
+L=es APP_NAME=myapp LOCALE_FOLDER=/apps/xy/locale rake autolang:translate
  
  
 == TODO
+Refactoring.
 
-Any help is appreciated.  This currently works well-enough for us but can be expanded to be much smarter.
-
-Fix the @cook_string@ and @reconstitute_string@ methods to handle strings like: _Application|Close_ and _ThisIsMyCamelCasedString_.  Currently the Google Translate engine will not translate camel cased strings and only grabs the first part of a pipe separated string.
+Translate _Application|Close_ and _ThisIsMyCamelCasedString_ correctly.
+Currently the Google Translate engine will not translate camel cased strings
+and only grabs the first part of a pipe separated string.

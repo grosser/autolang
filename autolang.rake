@@ -14,34 +14,27 @@
 require 'gettext/utils'
 require 'hpricot'
 require 'open-uri'
+require 'cgi'
 
 RAILS_ROOT = "#{File.dirname(__FILE__)}/.." unless defined?(RAILS_ROOT)
-MY_APP_TEXT_DOMAIN = "appname"
-MY_APP_VERSION     = "appname 1.0.0"
-
-class Autolang
-  def self.cook_string(str)
-    cooked = str.gsub(/\|/, ' &#124; ')
-    cooked.gsub(/ /, '%20')
-  end
-
-  def self.reconstitute_string(str)
-    str.gsub(/ &#124; /, '|') || str
-  end
-end
+MY_APP_TEXT_DOMAIN = "rs"
 
 namespace :autolang do
   desc "Translate strings into a new language."
   task :translate do
-    if !ENV['L']
-      puts "Usage: L=ll rake autolang:translate"
-      puts "  # Translate the strings into Spanish."
-      puts "  L=es rake autolang:translate"
+    if !ENV['L'] or !ENV['APP_NAME']
+      puts "Usage: L=language_code APP_NAME=app_name rake autolang:translate"
+      puts "  language_codes are 2 letter ISO 639 codes "
+      puts "  app_name can be found infront of your .pot file (it called *appname*.pot) "
+      puts ""
+      puts "Example: Translate all msgids into Spanish."
+      puts "  L=es APP_NAME=myapp rake autolang:translate"
       exit
     end
 
-    lang_dir = "#{RAILS_ROOT}/po/#{ENV['L']}"
-    pot_file = "#{RAILS_ROOT}/po/#{MY_APP_TEXT_DOMAIN}.pot"
+    root = ENV['LOCALE_FOLDER'] || RAILS_ROOT
+    lang_dir = "#{root}/_po/#{ENV['L']}"
+    pot_file = "#{root}/_po/#{ENV['APP_NAME']}.pot"
     po_file = "#{lang_dir}/#{ENV['L']}.po"
 
     # If the directory doesn't exist created it
@@ -56,30 +49,45 @@ namespace :autolang do
       `msginit -i #{pot_file} -o #{po_file} -l #{ENV['L']}`
     end
 
-    # translate
+    # translate existing po file
     # http://translate.google.com/translate_t?hl=en&ie=UTF8&text=What+is+your+name%3F&sl=en&tl=es
     # <div id="result_box" dir="ltr">¿Cómo te llamas?</div>
-    translation = ""
+    lines = []
     msgid = ""
     msgstr = ""
     puts "Translating..."
-    IO.foreach("#{lang_dir}/#{ENV['L']}.po") do |line|
-      baked = line.chomp
-      if baked =~ /^msgid/
-        msgid = Autolang.cook_string(baked.scan(/"(.+)"/).to_s)
+    File.foreach(po_file) do |line|
+      #read string to translate
+      if line =~ /^msgid/
+        msgid = line.scan(/"(.+)"/).to_s.gsub(' | ','|')
         unless msgid.empty?
-          doc = Hpricot(open("http://translate.google.com/translate_t?hl=en&ie=UTF8&text=#{msgid}&sl=en&tl=#{ENV['L']}"))
-          msgstr = doc.search("//div[@id='result_box']")
+          puts msgid
+          begin
+            url = "http://translate.google.com/translate_t?hl=en&ie=UTF8&text=#{CGI.escape(msgid)}&sl=en&tl=#{ENV['L']}"
+            doc = Hpricot(open(url))
+            puts msgstr = CGI.unescape(doc.search("//div[@id='result_box']").inner_html.gsub(' | ','|'))
+          rescue
+            puts "Could not load URL: #{url}"
+            msgstr = ''
+          end
+          puts '-'*80
         end
+
+      #replace translation
+      #TODO do not overwrite existing! <-> FORCE=1
       elsif line =~ /^msgstr/
-        unless msgstr.nil? or msgstr.empty?
-          baked = "msgstr \"#{Autolang.reconstitute_string(msgstr.inner_html)}\""
+        unless msgstr.empty?
+          line = "msgstr \"#{msgstr}\""
         end
       end
-      translation << "#{baked}\n"
+
+      #output to po file
+      lines << line
     end
-    File.open("#{lang_dir}/#{ENV['L']}.po", "w+") do |file|
-      file.write(translation)
+
+    #write new translation file
+    File.open(po_file, "w+") do |file|
+      file.write(lines*"\n")
     end
   end
 end
