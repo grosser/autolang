@@ -19,29 +19,24 @@ RAILS_ROOT = "#{File.dirname(__FILE__)}/.." unless defined?(RAILS_ROOT)
 MY_APP_TEXT_DOMAIN = "appname"
 MY_APP_VERSION     = "appname 1.0.0"
 
-def cook_string(str)
-  cooked = str.gsub(/\|/, ' &#124; ')
-  cooked = cooked.gsub(/ /, '%20')
-end
+class Autolang
+  def self.cook_string(str)
+    cooked = str.gsub(/\|/, ' &#124; ')
+    cooked.gsub(/ /, '%20')
+  end
 
-def reconstitute_string(str)
-  recon = str.gsub(/ &#124; /, '|') || str
+  def self.reconstitute_string(str)
+    str.gsub(/ &#124; /, '|') || str
+  end
 end
 
 namespace :autolang do
-
-  desc "Update pot/po files to match new version."
-  task :updatepo do
-    require 'gettext/utils'
-    GetText.update_pofiles(MY_APP_TEXT_DOMAIN, Dir.glob("{app,lib}/**/*.{rb,erb}"), MY_APP_VERSION)
-  end
-
   desc "Translate strings into a new language."
   task :translate do
     if !ENV['L']
-      puts "Usage: L=ll rake lang:translate"
+      puts "Usage: L=ll rake autolang:translate"
       puts "  # Translate the strings into Spanish."
-      puts "  L=es rake lang:translate"
+      puts "  L=es rake autolang:translate"
       exit
     end
 
@@ -71,14 +66,14 @@ namespace :autolang do
     IO.foreach("#{lang_dir}/#{ENV['L']}.po") do |line|
       baked = line.chomp
       if baked =~ /^msgid/
-        msgid = cook_string(baked.scan(/"(.+)"/).to_s)
+        msgid = Autolang.cook_string(baked.scan(/"(.+)"/).to_s)
         unless msgid.empty?
           doc = Hpricot(open("http://translate.google.com/translate_t?hl=en&ie=UTF8&text=#{msgid}&sl=en&tl=#{ENV['L']}"))
           msgstr = doc.search("//div[@id='result_box']")
         end
       elsif line =~ /^msgstr/
         unless msgstr.nil? or msgstr.empty?
-          baked = "msgstr \"#{reconstitute_string(msgstr.inner_html)}\""
+          baked = "msgstr \"#{Autolang.reconstitute_string(msgstr.inner_html)}\""
         end
       end
       translation << "#{baked}\n"
@@ -87,11 +82,4 @@ namespace :autolang do
       file.write(translation)
     end
   end
-
-  desc "Create mo-files for L10n"
-  task :makemo do
-    require 'gettext/utils'
-    GetText.create_mofiles(true, "po", "locale")
-  end
-
 end

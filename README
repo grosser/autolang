@@ -1,10 +1,13 @@
 = Autolang
  
-== Overview
+== Goal
+
+Translate all your Gettext - msgids to another language using google-translate.
+
+== Usage
+
+L=es rake autolang:translate #to translate into spanish (=es)
  
-Autolang is the beginning of a very simple rake task to help automate language translation for your Rails app.
- 
-Uses gettext, hpricot and open-uri.
  
 == TODO
 
