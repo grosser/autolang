@@ -20,6 +20,8 @@ L=es APP_NAME=myapp LOCALE_FOLDER=/apps/xy/locale rake autolang:translate
 == TODO
 Refactoring.
 
+Convert output to UTF8 (for now, copy output in normal view to UTF8 editor -> problems solved)
+
 Translate _Application|Close_ and _ThisIsMyCamelCasedString_ correctly.
 Currently the Google Translate engine will not translate camel cased strings
 and only grabs the first part of a pipe separated string.

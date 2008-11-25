@@ -65,7 +65,7 @@ namespace :autolang do
           begin
             url = "http://translate.google.com/translate_t?hl=en&ie=UTF8&text=#{CGI.escape(msgid)}&sl=en&tl=#{ENV['L']}"
             doc = Hpricot(open(url))
-            puts msgstr = CGI.unescape(doc.search("//div[@id='result_box']").inner_html.gsub(' | ','|'))
+            puts msgstr = CGI.unescape(doc.search("//div[@id='result_box']").inner_html).gsub(' | ','|')
           rescue
             puts "Could not load URL: #{url}"
             msgstr = ''
@@ -82,7 +82,7 @@ namespace :autolang do
       end
 
       #output to po file
-      lines << line
+      lines << line.strip
     end
 
     #write new translation file
