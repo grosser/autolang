@@ -1,7 +1,9 @@
 = Autolang
 
 == Goal
-Translate all your Gettext - msgids to another language using google-translate.
+ - Kick-start your translation!
+ - Translate all your Gettext - msgids to another language using google-translate.
+ - Provide a simple interface for other translation tasks
 
 
 == Install
@@ -14,14 +16,14 @@ git clone git://github.com/grosser/autolang.git
 L=es APP_NAME=myapp rake autolang:translate
 
 #use something other than the default po folder:
-L=es APP_NAME=myapp LOCALE_FOLDER=/apps/xy/locale rake autolang:translate
- 
- 
+L=es APP_NAME=myapp PO_FOLDER=/apps/xy/l/po rake autolang:translate
+
+
+==Translation examples
+ - Car|Engine -> Motor
+ - hello %{name} -> hallo %{name}
+
 == TODO
-Refactoring.
-
-Convert output to UTF8 (for now, copy output in normal view to UTF8 editor -> problems solved)
-
-Translate _Application|Close_ and _ThisIsMyCamelCasedString_ correctly.
-Currently the Google Translate engine will not translate camel cased strings
-and only grabs the first part of a pipe separated string.
+ - Make the Autolang class usable on its own (no ENV dependencies)
+ - Convert output to UTF8 (for now, copy output in normal view to UTF8 editor -> problems solved)
+ - Do not convert "& to &quot;&amp;.

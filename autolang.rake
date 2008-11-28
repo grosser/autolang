@@ -19,6 +19,77 @@ require 'cgi'
 RAILS_ROOT = "#{File.dirname(__FILE__)}/.." unless defined?(RAILS_ROOT)
 MY_APP_TEXT_DOMAIN = "rs"
 
+class Autolang
+  def self.extract_msgid(text)
+    return nil unless text =~ /^msgid/
+    msgid = text.scan(/"(.+)"/).to_s.gsub(' | ','|')
+    return nil if msgid.empty?
+    msgid
+  end
+
+  # http://translate.google.com/translate_t?hl=en&ie=UTF8&text=What+is+your+name%3F&sl=en&tl=es
+  # <div id="result_box" dir="ltr">¿Cómo te llamas?</div>
+  def self.translate(text)
+    e = TranslationEscaper.new(text)
+    begin
+      url = "http://translate.google.com/translate_t?hl=en&ie=UTF8&text=#{e.escaped}&sl=en&tl=#{ENV['L']}"
+      translated = e.unescape(Hpricot(open(url)).search("//div[@id='result_box']").inner_html)
+    rescue
+      puts "Could not load URL: #{url}"
+      translated = nil
+    end
+    return translated.empty? ? nil : translated
+  end
+
+  # protects text from evil translation robots
+  # by ensuring phrases that should not be translated (Car|Engine, %{name}, ...)
+  # stay untranslated
+  class TranslationEscaper
+    attr_accessor :escaped
+
+    def initialize(text)
+      @text = text
+      self.escaped = escape_text
+    end
+
+    def unescape(translation)
+      remove_placeholders(translation)
+    end
+
+  protected
+  
+    def escape_text
+      @placeholders = []
+      text = @text
+      if text =~ /^(.+\|)/
+        @cut_off = $1
+        text = text.sub($1,'')
+      end
+      text = add_placeholder(text, /(%\{.+\})/ )
+      text = CGI.escape(text)
+    end
+
+    # replace stuff that would get messed up in translation
+    # through a non-translateable placeholder
+    def add_placeholder(text,regex)
+      if text =~ regex
+        @placeholders << $1
+        text = text.sub($1,"PH#{@placeholders.length-1}")
+      end
+      text
+    end
+
+    # swap placeholders with original values
+    def remove_placeholders(text)
+      @placeholders.each_index do |i|
+        replaced = @placeholders[i]
+        text = text.sub("PH#{i}",replaced)
+      end
+      text
+    end
+  end
+end
+
 namespace :autolang do
   desc "Translate strings into a new language."
   task :translate do
@@ -32,9 +103,9 @@ namespace :autolang do
       exit
     end
 
-    root = ENV['LOCALE_FOLDER'] || RAILS_ROOT
-    lang_dir = "#{root}/_po/#{ENV['L']}"
-    pot_file = "#{root}/_po/#{ENV['APP_NAME']}.pot"
+    root = ENV['PO_FOLDER'] || Fle.join(RAILS_ROOT,'locale')
+    lang_dir = "#{root}/#{ENV['L']}"
+    pot_file = "#{root}/#{ENV['APP_NAME']}.pot"
     po_file = "#{lang_dir}/#{ENV['L']}.po"
 
     # If the directory doesn't exist created it
@@ -50,31 +121,18 @@ namespace :autolang do
     end
 
     # translate existing po file
-    # http://translate.google.com/translate_t?hl=en&ie=UTF8&text=What+is+your+name%3F&sl=en&tl=es
-    # <div id="result_box" dir="ltr">¿Cómo te llamas?</div>
     lines = []
     msgid = ""
     msgstr = ""
     puts "Translating..."
     File.foreach(po_file) do |line|
       #read string to translate
-      if line =~ /^msgid/
-        msgid = line.scan(/"(.+)"/).to_s.gsub(' | ','|')
-        unless msgid.empty?
-          puts msgid
-          begin
-            url = "http://translate.google.com/translate_t?hl=en&ie=UTF8&text=#{CGI.escape(msgid)}&sl=en&tl=#{ENV['L']}"
-            doc = Hpricot(open(url))
-            puts msgstr = CGI.unescape(doc.search("//div[@id='result_box']").inner_html).gsub(' | ','|')
-          rescue
-            puts "Could not load URL: #{url}"
-            msgstr = ''
-          end
-          puts '-'*80
-        end
+      if msgid = Autolang.extract_msgid(line)
+        puts msgid
+        puts msgstr = Autolang.translate(msgid)
+        puts '-'*80
 
       #replace translation
-      #TODO do not overwrite existing! <-> FORCE=1
       elsif line =~ /^msgstr/
         unless msgstr.empty?
           line = "msgstr \"#{msgstr}\""
