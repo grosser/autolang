@@ -11,6 +11,7 @@
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
 
+require 'rtranslate'
 require 'gettext/utils'
 require 'hpricot'
 require 'open-uri'
@@ -27,18 +28,9 @@ class Autolang
     msgid
   end
 
-  # http://translate.google.com/translate_t?hl=en&ie=UTF8&text=What+is+your+name%3F&sl=en&tl=es
-  # <div id="result_box" dir="ltr">¿Cómo te llamas?</div>
   def self.translate(text)
     e = TranslationEscaper.new(text)
-    begin
-      url = "http://translate.google.com/translate_t?hl=en&ie=UTF8&text=#{e.escaped}&sl=en&tl=#{ENV['L']}"
-      translated = e.unescape(Hpricot(open(url)).search("//div[@id='result_box']").inner_html)
-    rescue
-      puts "Could not load URL: #{url}"
-      translated = nil
-    end
-    return translated.empty? ? nil : translated
+    e.unescape(Translate.t(e.escaped, Language::ENGLISH, ENV['L']))
   end
 
   # protects text from evil translation robots
@@ -66,7 +58,7 @@ class Autolang
         text = text.sub($1,'')
       end
       text = add_placeholder(text, /(%\{.+\})/ )
-      text = CGI.escape(text)
+      text = text.gsub('&','and')#& cannot be translated
     end
 
     # replace stuff that would get messed up in translation
@@ -103,7 +95,7 @@ namespace :autolang do
       exit
     end
 
-    root = ENV['PO_FOLDER'] || Fle.join(RAILS_ROOT,'locale')
+    root = ENV['PO_FOLDER'] || File.join(RAILS_ROOT,'locale')
     lang_dir = "#{root}/#{ENV['L']}"
     pot_file = "#{root}/#{ENV['APP_NAME']}.pot"
     po_file = "#{lang_dir}/#{ENV['L']}.po"

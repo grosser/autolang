@@ -10,8 +10,12 @@ Goal
 
 Install
 =======
+sudo gem install googletranslate gettext hpricot
+
 Copy the rake task anywhere OR use git:
 git clone git://github.com/grosser/autolang.git
+
+
 
 
 Usage

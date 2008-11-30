@@ -34,15 +34,11 @@ describe Autolang do
     end
     
     it "converts html entities back" do
-      pending do
-        Autolang.translate('"&&&&"').should == '"&&&&"'
-      end
+      Autolang.translate('"&&&"').should == '"andandand"'
     end
 
     it "translates with strange signs" do
-      pending do
-        Autolang.translate('production').should == 'producción'
-      end
+      Autolang.translate('production').should == 'producción'
     end
 
     it "translates with | " do
@@ -58,10 +54,6 @@ end
 describe Autolang::TranslationEscaper do
   t = Autolang::TranslationEscaper
   describe :escaped do
-    it "removes html entities" do
-      t.new('a & b').escaped.should == 'a+%26+b'
-    end
-
     it "is symetric for html" do
       e = t.new('a & b')
       e.unescape('a & b').should == 'a & b'
@@ -69,13 +61,13 @@ describe Autolang::TranslationEscaper do
 
     it "replaces piped subsections" do
       e = t.new('Car|be gone')
-      e.escaped.should == 'be+gone'
+      e.escaped.should == 'be gone'
       e.unescape('geh weg').should == 'geh weg'
     end
 
     it "replaces %{something}" do
       e = t.new('can i have a %{name}, please.')
-      e.escaped.should == 'can+i+have+a+PH0%2C+please.'
+      e.escaped.should == 'can i have a PH0, please.'
       e.unescape('kann ich bitte ein PH0 haben.').should == 'kann ich bitte ein %{name} haben.'
     end
 
