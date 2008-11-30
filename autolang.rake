@@ -53,7 +53,7 @@ class Autolang
     def escape_text
       @placeholders = []
       text = @text
-      if text =~ /^(.+\|)/
+      if text =~ /^([^\s]+\|)/
         @cut_off = $1
         text = text.sub($1,'')
       end

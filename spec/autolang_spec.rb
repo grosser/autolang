@@ -54,15 +54,16 @@ end
 describe Autolang::TranslationEscaper do
   t = Autolang::TranslationEscaper
   describe :escaped do
-    it "is symetric for html" do
-      e = t.new('a & b')
-      e.unescape('a & b').should == 'a & b'
-    end
-
     it "replaces piped subsections" do
       e = t.new('Car|be gone')
       e.escaped.should == 'be gone'
       e.unescape('geh weg').should == 'geh weg'
+    end
+
+    it "does not replace regular pipes" do
+      e = t.new('Eat my pipe | fool')
+      e.escaped.should == 'Eat my pipe | fool'
+      e.unescape('Iss mein Rohr | idiot').should == 'Iss mein Rohr | idiot'
     end
 
     it "replaces %{something}" do
