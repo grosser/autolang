@@ -17,9 +17,6 @@ require 'hpricot'
 require 'open-uri'
 require 'cgi'
 
-RAILS_ROOT = "#{File.dirname(__FILE__)}/.." unless defined?(RAILS_ROOT)
-MY_APP_TEXT_DOMAIN = "rs"
-
 class Autolang
   def self.extract_msgid(text)
     return nil unless text =~ /^msgid/
@@ -85,22 +82,21 @@ end
 namespace :autolang do
   desc "Translate strings into a new language."
   task :translate do
-    if !ENV['L'] or !ENV['APP_NAME']
-      puts "Usage: L=language_code APP_NAME=app_name rake autolang:translate"
+    if !ENV['L'] or !ENV['POT_FILE']
+      puts "Usage: L=language_code POT_FILE=po/my_app.pot rake autolang:translate"
       puts "  language_codes are 2 letter ISO 639 codes "
-      puts "  app_name can be found infront of your .pot file (it called *appname*.pot) "
+      puts "  if you do not have a pot file, use gettext and updatepo first (google helps...)"
       puts ""
       puts "Example: Translate all msgids into Spanish."
-      puts "  L=es APP_NAME=myapp rake autolang:translate"
+      puts "  L=es POT_FILE=po/my_app.pot rake autolang:translate"
       exit
     end
-
-    root = ENV['PO_FOLDER'] || File.join(RAILS_ROOT,'locale')
-    lang_dir = "#{root}/#{ENV['L']}"
-    pot_file = "#{root}/#{ENV['APP_NAME']}.pot"
-    po_file = "#{lang_dir}/#{ENV['L']}.po"
+    
+    pot_file = ENV['POT_FILE']
+    po_file = File.join(File.dirname(pot_file),ENV['L'],"#{ENV['L']}.po")
 
     # If the directory doesn't exist created it
+    lang_dir = File.dirname(po_file)
     if !FileTest.exist?(lang_dir)
       puts "Creating new language directory: #{lang_dir}"
       Dir.mkdir(lang_dir)
