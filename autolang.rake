@@ -10,13 +10,6 @@
 # 
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
-
-require 'rtranslate'
-require 'gettext/utils'
-require 'hpricot'
-require 'open-uri'
-require 'cgi'
-
 class Autolang
   def self.extract_msgid(text)
     return nil unless text =~ /^msgid/
@@ -26,6 +19,7 @@ class Autolang
   end
 
   def self.translate(text)
+    require 'rtranslate'
     e = TranslationEscaper.new(text)
     e.unescape(Translate.t(e.escaped, Language::ENGLISH, ENV['L']))
   end
