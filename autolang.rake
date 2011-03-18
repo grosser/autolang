@@ -1,3 +1,5 @@
+# coding: utf-8
+
 # Copyright © 2008 Chris Blackburn <cblackburn : at : cbciweb.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining
