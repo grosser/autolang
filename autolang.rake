@@ -13,7 +13,7 @@
 class Autolang
   def self.extract_msgid(text)
     return nil unless text =~ /^msgid/
-    msgid = text.scan(/"(.+)"/).to_s.gsub(' | ','|')
+    msgid = text.scan(/"(.+)"/)[0].to_s.gsub(' | ','|')
     return nil if msgid.empty?
     msgid
   end
