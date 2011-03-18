@@ -16,10 +16,10 @@ require 'rtranslate/language'
 
 class Autolang
   def self.extract_msgid(text)
-    return nil unless text =~ /^msgid/
-    msgid = text.scan(/"(.+)"/)[0].to_s.gsub(' | ','|')
-    return nil if msgid.empty?
-    msgid
+    return nil if text.match(/^msgid/).nil?
+    msgid = text.scan(/"(.+)"/)[0]
+    return nil if msgid.nil?
+    msgid[0].to_s.gsub(' | ','|')
   end
 
   def self.translate(text)
