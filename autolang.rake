@@ -25,7 +25,7 @@ class Autolang
   def self.translate(text)
     require 'rtranslate'
     e = TranslationEscaper.new(text)
-    e.unescape(Translate.t(e.escaped, Language::ENGLISH, ENV['L']))
+    e.unescape(Translate.t(e.escaped, 'en', ENV['L']))
   end
 
   # protects text from evil translation robots
