@@ -25,9 +25,10 @@ class Autolang
   end
 
   def self.translate(text)
-    require 'rtranslate'
     e = TranslationEscaper.new(text)
-    e.unescape(Translate.t(e.escaped, 'en', ENV['L']))
+    
+    @translator = Translate::RTranslate.new unless @translator
+    e.unescape @translator.translate(e.escaped, :from => 'ENGLISH', :to => ENV['L'].dup, :userip => '127.0.0.1')
   end
 
   # protects text from evil translation robots
