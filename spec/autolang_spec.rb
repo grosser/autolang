@@ -32,11 +32,11 @@ describe Autolang do
     end
 
     it "converts html entities" do
-      Autolang.translate('sales & tax').should == 'ventas y de impuestos'
+      Autolang.translate('sales & tax').should == 'impuesto sobre ventas y'
     end
     
     it "converts html entities back" do
-      Autolang.translate('"&&&"').should == '"andandand"'
+      Autolang.translate('"&&&"').should == '"Andandand"'
     end
 
     it "translates with strange signs" do
