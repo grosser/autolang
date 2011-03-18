@@ -10,6 +10,10 @@
 # 
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
+
+require 'rtranslate'
+require 'rtranslate/language'
+
 class Autolang
   def self.extract_msgid(text)
     return nil unless text =~ /^msgid/
