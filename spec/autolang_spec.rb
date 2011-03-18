@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'rake'
-require 'spec'
+require 'rspec'
 require 'mocha'
 load File.join([File.dirname(__FILE__),'..','autolang.rake'])
 
