@@ -23,7 +23,7 @@ class Autolang
     # generate po file if it does not exist
     unless FileTest.exist?(po_file)
       puts "Generating new language file: #{po_file}"
-      `msginit -i #{pot_file} -o #{po_file} -l #{language}`
+      `msginit -i #{pot_file} -o #{po_file} -l #{language} --no-translator`
     end
 
     lines = translate_po_file_content(File.readlines(po_file))
