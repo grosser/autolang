@@ -28,6 +28,6 @@ namespace :autolang do
       exit
     end
     
-    Autolang.translate_into_new_language(ENV['POTFILE'], ENV['L'])
+    Autolang.translate_into_new_language(ENV['POT_FILE'], ENV['L'])
   end
 end

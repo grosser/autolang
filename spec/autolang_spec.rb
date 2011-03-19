@@ -5,6 +5,8 @@ require 'mocha'
 $LOAD_PATH.unshift 'lib'
 require 'autolang'
 
+load 'lib/tasks/autolang.rake'
+
 describe Autolang do
   it "has a VERSION" do
     Autolang::VERSION.should =~ /^\d+\.\d+\.\d+$/
@@ -80,5 +82,25 @@ describe Autolang::TranslationEscaper do
       e = t.new('hello %{name}')
       e.unescape('hello PH0').should == 'hello %{name}'
     end
+  end
+end
+
+describe 'translate pot file' do
+  delete = lambda{ `rm -rf spec/fixtures && mkdir spec/fixtures` }
+
+  before &delete
+  after &delete
+
+  before do
+    pot = 'spec/fixtures/xxx.pot'
+    File.open(pot, 'w'){|f| f.write(%Q{msgid "hello"\nmsgstr ""}) }
+    ENV['POT_FILE'] = pot
+    ENV['L'] = 'de'
+    @po = 'spec/fixtures/de/de.po'
+  end
+
+  it "translates all msgids" do
+    Rake::Task['autolang:translate'].execute
+    File.read(@po).should include(%Q{msgid "hello"\nmsgstr "hallo"})
   end
 end
