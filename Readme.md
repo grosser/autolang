@@ -10,11 +10,9 @@ Goal
 
 Install
 =======
-sudo gem install googletranslate gettext
+    gem install googletranslate gettext
 
-Copy the rake task anywhere OR use git:
-git clone git://github.com/grosser/autolang.git
-
+Copy the [rake task](https://github.com/grosser/autolang/raw/master/autolang.rake) into your project.
 
 Usage
 =====
@@ -33,3 +31,12 @@ TODO
 ====
  - Make the Autolang class usable on its own (no ENV dependencies)
  - Do not convert "& to "and", use something 'smarter'.
+
+Authors
+=======
+Original by [Chris Blackburn](cbciweb.com) released under MIT license
+
+Enhanced by
+
+ - [Michael Grosser](http://grosser.it)
+ - [Hans Engel](http://engel.uk.to/)
