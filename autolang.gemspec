@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
     "Rakefile",
     "Readme.md",
     "VERSION",
+    "autolang.gemspec",
     "lib/autolang.rb",
     "lib/tasks/autolang.rake",
     "spec/autolang_spec.rb"
