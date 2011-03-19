@@ -28,48 +28,6 @@ namespace :autolang do
       exit
     end
     
-    pot_file = ENV['POT_FILE']
-    po_file = File.join(File.dirname(pot_file),ENV['L'],"#{ENV['L']}.po")
-
-    # If the directory doesn't exist created it
-    lang_dir = File.dirname(po_file)
-    if !FileTest.exist?(lang_dir)
-      puts "Creating new language directory: #{lang_dir}"
-      Dir.mkdir(lang_dir)
-    end
-
-    # copy the main po file if it doesn't exist
-    if !FileTest.exist?(po_file)
-      puts "Generating new language file: #{po_file}"
-      `msginit -i #{pot_file} -o #{po_file} -l #{ENV['L']}`
-    end
-
-    # translate existing po file
-    lines = []
-    msgid = ""
-    msgstr = ""
-    puts "Translating..."
-    File.foreach(po_file) do |line|
-      #read string to translate
-      if msgid = Autolang.extract_msgid(line)
-        puts msgid
-        puts msgstr = Autolang.translate(msgid)
-        puts '-'*80
-
-      #replace translation
-      elsif line =~ /^msgstr/
-        unless msgstr.empty?
-          line = "msgstr \"#{msgstr}\""
-        end
-      end
-
-      #output to po file
-      lines << line.strip
-    end
-
-    #write new translation file
-    File.open(po_file, "w+") do |file|
-      file.write(lines*"\n")
-    end
+    Autolang.translate_into_new_language(ENV['POTFILE'], ENV['L'])
   end
 end
