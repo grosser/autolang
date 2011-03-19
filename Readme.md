@@ -10,9 +10,17 @@ Goal
 
 Install
 =======
-    gem install googletranslate gettext
 
-Copy the [rake task](https://github.com/grosser/autolang/raw/master/autolang.rake) into your project.
+gem install autolang
+
+Add to Gemfile
+    gem "autolang", :group=>:development
+
+OR as Rails plugin
+    rails plugin install git://github.com/grosser/autolang.git
+
+OR copy rake tasks
+    curl https://github.com/grosser/autolang/raw/master/lib/tasks/autolang.rake > lib/tasks/autolang.rake
 
 Usage
 =====
@@ -26,10 +34,8 @@ Translation examples
  - Car|Engine -> Motor
  - hello %{name} -> hallo %{name}
 
-
 TODO
 ====
- - Make the Autolang class usable on its own (no ENV dependencies)
  - Do not convert "& to "and", use something 'smarter'.
 
 Authors

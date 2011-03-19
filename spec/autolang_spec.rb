@@ -1,13 +1,15 @@
 # coding: utf-8
 
-require 'rubygems'
 require 'rake'
-require 'rspec'
 require 'mocha'
-load File.join([File.dirname(__FILE__),'..','autolang.rake'])
-
+$LOAD_PATH.unshift 'lib'
+require 'autolang'
 
 describe Autolang do
+  it "has a VERSION" do
+    Autolang::VERSION.should =~ /^\d+\.\d+\.\d+$/
+  end
+
   describe :extract_msgid do
     it "finds message in text" do
       Autolang.extract_msgid('msgid "hello"').should == 'hello'
