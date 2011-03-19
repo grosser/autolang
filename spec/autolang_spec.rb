@@ -5,8 +5,6 @@ require 'mocha'
 $LOAD_PATH.unshift 'lib'
 require 'autolang'
 
-load 'lib/tasks/autolang.rake'
-
 describe Autolang do
   it "has a VERSION" do
     Autolang::VERSION.should =~ /^\d+\.\d+\.\d+$/
@@ -27,32 +25,28 @@ describe Autolang do
   end
 
   describe :translate do
-    before do
-      ENV['L']='es'
-    end
-
     it "translates a word" do
-      Autolang.translate('hello').should == 'hola'
+      Autolang.translate('hello', 'es').should == 'hola'
     end
 
     it "converts html entities" do
-      Autolang.translate('sales & tax').should == 'impuesto sobre ventas y'
+      Autolang.translate('sales & tax', 'es').should == 'impuesto sobre ventas y'
     end
     
     it "converts html entities back" do
-      Autolang.translate('"&&&"').should == '"Andandand"'
+      Autolang.translate('"&&&"', 'es').should == '"Andandand"'
     end
 
     it "translates with strange signs" do
-      Autolang.translate('production').should == 'producción'
+      Autolang.translate('production', 'es').should == 'producción'
     end
 
     it "translates with | " do
-      Autolang.translate('Auto|hello').should == 'hola'
+      Autolang.translate('Auto|hello', 'es').should == 'hola'
     end
 
     it "translates with %{}" do
-      Autolang.translate('hello %{name}').should == 'hola %{name}'
+      Autolang.translate('hello %{name}', 'es').should == 'hola %{name}'
     end
   end
 end
@@ -92,15 +86,13 @@ describe 'translate pot file' do
   after &delete
 
   before do
-    pot = 'spec/fixtures/xxx.pot'
-    File.open(pot, 'w'){|f| f.write(%Q{msgid "hello"\nmsgstr ""}) }
-    ENV['POT_FILE'] = pot
-    ENV['L'] = 'de'
+    @pot = 'spec/fixtures/xxx.pot'
+    File.open(@pot, 'w'){|f| f.write(%Q{msgid "hello"\nmsgstr ""}) }
     @po = 'spec/fixtures/de/de.po'
   end
 
   it "translates all msgids" do
-    Rake::Task['autolang:translate'].execute
+    `./bin/autolang #{@pot} de`
     File.read(@po).should include(%Q{msgid "hello"\nmsgstr "hallo"})
   end
 end

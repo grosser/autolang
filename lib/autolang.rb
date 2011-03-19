@@ -26,17 +26,17 @@ class Autolang
       `msginit -i #{pot_file} -o #{po_file} -l #{language} --no-translator`
     end
 
-    lines = translate_po_file_content(File.readlines(po_file))
+    lines = translate_po_file_content(File.readlines(po_file), language)
     File.open(po_file, "w+"){|f| f.write(lines*"\n") }
   end
 
-  def self.translate_po_file_content(lines)
+  def self.translate_po_file_content(lines, language)
     msgstr = ""
     puts "Translating..."
     lines.map do |line|
       #read string to translate
       if msgid = extract_msgid(line)
-        msgstr = translate(msgid)
+        msgstr = translate(msgid, language)
 
         puts msgid
         puts msgstr
@@ -51,11 +51,10 @@ class Autolang
     end
   end
 
-  def self.translate(text)
+  def self.translate(text, language)
     e = TranslationEscaper.new(text)
-
     @translator = Translate::RTranslate.new unless @translator
-    e.unescape @translator.translate(e.escaped, :from => 'ENGLISH', :to => ENV['L'].dup, :userip => '127.0.0.1')
+    e.unescape @translator.translate(e.escaped, :from => 'ENGLISH', :to => language, :userip => '127.0.0.1')
   end
 
   # protects text from evil translation robots

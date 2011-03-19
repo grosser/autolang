@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'optparse'
+
+$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
+require 'autolang'
+
+OptionParser.new do |opts|
+  opts.banner = <<BANNER
+
+Usage:
+    autolang /path/to/app.pot <language-code>
+    autolang /path/to/app.pot es
+
+language-code are 2 letter ISO 639 codes
+if you do not have a pot file, use gettext and updatepo first (google helps...)
+
+
+Options:
+BANNER
+  opts.on("-h", "--help","Show this.") { puts opts; exit }
+  opts.on('-v', '--version','Show Version'){ puts Autolang::VERSION; exit}
+end.parse!
+
+if ARGV.size < 2 or not File.exist?(ARGV.first)
+  puts "Usage instructions: autolang --help"
+  exit
+end
+
+Autolang.translate_into_new_language(*ARGV)

@@ -1,33 +1,19 @@
 Autolang
 ========
 
-Goal
-====
  - Kick-start your translation!
  - Translate all your Gettext - msgids to another language using google-translate.
- - Provide a simple interface for other translation tasks
-
-
-Install
-=======
-
-gem install autolang
-
-Add to Gemfile
-    gem "autolang", :group=>:development
-
-OR as Rails plugin
-    rails plugin install git://github.com/grosser/autolang.git
-
-OR copy rake tasks
-    curl https://github.com/grosser/autolang/raw/master/lib/tasks/autolang.rake > lib/tasks/autolang.rake
 
 Usage
 =====
-Translate your pot file to any other language:
 
-    # to translate into spanish (=es), when current apps name is myapp (from myapp.pot)
-    L=es POT_FILE=/app/po/my_app.pot rake autolang:translate
+gem install autolang
+
+    autolang /path/to/app.pot <language-code>
+    autolang /path/to/app.pot es
+
+language-code are 2 letter [ISO 639](http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) codes<br/>
+if you have no .pot file, use gettext and updatepo first (google helps...)
 
 Translation examples
 ====================
