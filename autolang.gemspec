@@ -5,12 +5,14 @@
 
 Gem::Specification.new do |s|
   s.name = %q{autolang}
-  s.version = "0.1.1"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Chris Blackburn", "Michael Grosser"]
   s.date = %q{2011-03-19}
+  s.default_executable = %q{autolang}
   s.email = %q{michael@grosser.it}
+  s.executables = ["autolang"]
   s.files = [
     "Gemfile",
     "Gemfile.lock",
@@ -18,8 +20,8 @@ Gem::Specification.new do |s|
     "Readme.md",
     "VERSION",
     "autolang.gemspec",
+    "bin/autolang",
     "lib/autolang.rb",
-    "lib/tasks/autolang.rake",
     "spec/autolang_spec.rb"
   ]
   s.homepage = %q{http://github.com/grosser/autolang}
