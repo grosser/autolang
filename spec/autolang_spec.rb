@@ -25,6 +25,10 @@ describe Autolang do
   end
 
   describe :translate do
+    it "can work with frozen strings" do
+      Autolang.translate('hello'.freeze, 'es'.freeze).should == 'hola'
+    end
+
     it "translates a word" do
       Autolang.translate('hello', 'es').should == 'hola'
     end
@@ -80,7 +84,7 @@ describe Autolang::TranslationEscaper do
 end
 
 describe 'translate pot file' do
-  delete = lambda{ `rm -rf spec/fixtures && mkdir spec/fixtures` }
+  delete = lambda{|_| `rm -rf spec/fixtures && mkdir spec/fixtures` }
 
   before &delete
   after &delete
