@@ -27,4 +27,4 @@ if ARGV.size < 2 or not File.exist?(ARGV.first)
   exit
 end
 
-Autolang.translate_into_new_language(*ARGV)
+Autolang.translate_into_new_language(ARGV[0], ARGV[1].dup)
