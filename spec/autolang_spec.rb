@@ -80,7 +80,7 @@ describe Autolang::TranslationEscaper do
 end
 
 describe 'translate pot file' do
-  delete = lambda{ `rm -rf spec/fixtures && mkdir spec/fixtures` }
+  delete = lambda{|_| `rm -rf spec/fixtures && mkdir spec/fixtures` }
 
   before &delete
   after &delete

@@ -7,7 +7,7 @@ class Autolang
   def self.extract_msgid(text)
     return unless text =~ /^msgid/
     return unless msgid = text.scan(/"(.+)"/)[0]
-    msgid.to_s.gsub(' | ','|')
+    msgid.first.to_s.gsub(' | ','|')
   end
 
   def self.translate_into_new_language(pot_file, language)
