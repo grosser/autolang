@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
-require 'rubygems'
+require "rubygems" if RUBY_VERSION < "1.9"
 require 'optparse'
 
-$LOAD_PATH << File.join(File.dirname(__FILE__), '..', 'lib')
+$LOAD_PATH << File.expand_path("../../lib", __FILE__)
 require 'autolang'
+require 'autolang/version'
 
 OptionParser.new do |opts|
   opts.banner = <<BANNER
@@ -11,6 +12,7 @@ OptionParser.new do |opts|
 Usage:
     autolang /path/to/app.pot <language-code>
     autolang /path/to/app.pot es
+    autolang /path/to/app.json es
 
 language-code are 2 letter ISO 639 codes
 if you do not have a pot file, use gettext and updatepo first (google helps...)

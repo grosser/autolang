@@ -2,23 +2,26 @@ Autolang
 ========
 
  - Kick-start your translation!
- - Translate all your Gettext - msgids to another language using google-translate.
+ - Translate all your Gettext - msgids / json to another language using google-translate.
 
 Usage
 =====
 
 gem install autolang
 
-    autolang /path/to/app.pot <language-code>
-    autolang /path/to/app.pot es
+```Bash
+autolang /path/to/app.pot <language-code>
+autolang /path/to/app.pot es
+autolang /path/to/app.json es
+```
 
 language-code are 2 letter [ISO 639](http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) codes<br/>
 if you have no .pot file, use gettext and updatepo first (google helps...)
 
 Translation examples
 ====================
- - Car|Engine -> Motor
- - hello %{name} -> hallo %{name}
+ - `Car|Engine` -> `Motor`
+ - `hello %{name}` -> `hallo %{name}`
 
 TODO
 ====

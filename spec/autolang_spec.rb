@@ -1,8 +1,5 @@
-# coding: utf-8
-
 require 'rake'
 require 'mocha'
-$LOAD_PATH.unshift 'lib'
 require 'autolang'
 
 describe Autolang do
@@ -36,7 +33,7 @@ describe Autolang do
     it "converts html entities" do
       Autolang.translate('sales & tax', 'es').should == 'impuesto sobre ventas y'
     end
-    
+
     it "converts html entities back" do
       Autolang.translate('"&&&"', 'es').should == '"Andandand"'
     end

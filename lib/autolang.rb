@@ -1,9 +1,7 @@
 require 'rtranslate'
 require 'rtranslate/language'
 
-class Autolang
-  VERSION = File.read( File.join(File.dirname(__FILE__),'..','VERSION') ).strip
-
+module Autolang
   def self.extract_msgid(text)
     return unless text =~ /^msgid/
     return unless msgid = text.scan(/"(.+)"/)[0]

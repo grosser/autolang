@@ -1,11 +1,8 @@
-source :rubygems
+source "https://rubygems.org"
 
-gem 'i18n'
-gem 'sishen-rtranslate'
+gemspec
 
-group :dev do
-  gem 'jeweler'
-  gem 'mocha'
-  gem 'rspec'
-  gem 'rake'
-end
+gem 'mocha'
+gem 'bump'
+gem 'rspec'
+gem 'rake'
