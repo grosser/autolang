@@ -35,3 +35,5 @@ Enhanced by
 
  - [Michael Grosser](http://grosser.it)
  - [Hans Engel](http://engel.uk.to/)
+
+[![Build Status](https://travis-ci.org/grosser/autolang.png)](https://travis-ci.org/grosser/autolang)
