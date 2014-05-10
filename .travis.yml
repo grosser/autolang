@@ -1,0 +1,9 @@
+language: ruby
+bundler_args: ""
+rvm:
+  - ree
+  - 1.9.3
+  - 2.0.0
+  - 2.1.1
+env:
+  secure: "eIt/jRiIR7umno5cKNgvOhTsKQKFD7oRz6WfAgD6RycbiaIBXciCnJLV+XudTptQBbPxR/4IG30JztEeydm2BZlwnBE0Qs1EYcUAfOUriEUnx1mqgUjidgo7QoyBW/vVxsnimBclT3+z/systaXtrbMXkRFquGb+URZjyY4Gz1Q=" # API_KEY=

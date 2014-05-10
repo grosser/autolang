@@ -2,8 +2,9 @@ require 'rake'
 require 'mocha'
 require 'autolang'
 require 'tmpdir'
+require 'stringio'
 
-EasyTranslate.api_key = File.read("spec/API_KEY").strip
+EasyTranslate.api_key = ENV["API_KEY"] || File.read("spec/API_KEY").strip
 
 describe Autolang do
   it "has a VERSION" do
@@ -12,15 +13,15 @@ describe Autolang do
 
   describe :extract_msgid do
     it "finds message in text" do
-      Autolang.extract_msgid('msgid "hello"').should == 'hello'
+      Autolang.send(:extract_msgid, 'msgid "hello"').should == 'hello'
     end
 
     it "does not find empty message" do
-      Autolang.extract_msgid('msgid ""').should == nil
+      Autolang.send(:extract_msgid, 'msgid ""').should == nil
     end
 
     it "does not find non-existing message" do
-      Autolang.extract_msgid('msgstr "hello"').should == nil
+      Autolang.send(:extract_msgid, 'msgstr "hello"').should == nil
     end
   end
 
@@ -56,7 +57,7 @@ describe Autolang do
 
   describe "CLI" do
     def autolang(command)
-      result = `#{File.expand_path("../../bin/autolang", __FILE__)} #{command}`
+      result = `#{File.expand_path("../../bin/autolang", __FILE__)} #{command} 2>&1`
       raise result unless $?.success?
       result
     end
@@ -65,11 +66,9 @@ describe Autolang do
 
     describe 'translate pot file' do
       it "translates all msgids" do
-        if system("which msginit")
-          File.open("xxx.pot", 'w'){|f| f.write(%Q{msgid "hello"\nmsgstr ""}) }
-          autolang "#{EasyTranslate.api_key} xxx.pot de"
-          File.read("de/de.pot").should include(%Q{msgid "hello"\nmsgstr "hallo"})
-        end
+        File.open("xxx.pot", 'w'){|f| f.write(%Q{msgid "hello"\nmsgstr ""}) }
+        autolang "#{EasyTranslate.api_key} xxx.pot de"
+        File.read("de/de.po").should include(%Q{msgid "hello"\nmsgstr "Hallo"})
       end
     end
 
@@ -86,7 +85,8 @@ describe Autolang do
 end
 
 describe Autolang::TranslationEscaper do
-  t = Autolang::TranslationEscaper
+  let(:t) { Autolang::TranslationEscaper }
+
   describe :escaped do
     it "replaces piped subsections" do
       e = t.new('Car|be gone')

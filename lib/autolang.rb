@@ -36,11 +36,14 @@ module Autolang
 
       # generate po file if it does not exist
       unless FileTest.exist?(po_file)
-        puts "Generating new language file: #{po_file}"
-        `msginit -i #{pot_file} -o #{po_file} -l #{language} --no-translator`
-        unless $?.success?
-          raise "Error during initialization, make sure gettext is installed"
+        if system("which msginit")
+          puts "Generating new language file: #{po_file}"
+          `msginit -i #{pot_file} -o #{po_file} -l #{language} --no-translator`
+        else
+          warn "msginit not available creating new language by copying"
+          `cp #{pot_file} #{po_file}`
         end
+        raise "Error during initialization" unless $?.success?
       end
 
       lines = translate_po_file_content(File.readlines(po_file), language)
