@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    autolang (0.2.0)
+    autolang (0.3.0)
       easy_translate
       i18n
       json
