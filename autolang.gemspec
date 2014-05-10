@@ -10,4 +10,6 @@ Gem::Specification.new name, Autolang::VERSION do |s|
   s.license = "MIT"
   s.add_runtime_dependency 'i18n'
   s.add_runtime_dependency 'easy_translate'
+  s.add_runtime_dependency 'json'
+  s.executables = ["autolang"]
 end

@@ -7,8 +7,16 @@ module Autolang
     msgid.first.to_s.gsub(' | ','|')
   end
 
-  def self.translate_into_new_language(key, pot_file, language)
+  def self.translate_into_new_language(key, file, language)
     EasyTranslate.api_key = key
+    if file.end_with?(".json")
+      translate_json_into_new_file(file, language)
+    else
+      translate_gettext_into_new_file(file, language)
+    end
+  end
+
+  def self.translate_gettext_into_new_file(pot_file, language)
     po_file = File.join(File.dirname(pot_file), language, "#{language}.po")
 
     # create directory if it does not exist
@@ -28,7 +36,28 @@ module Autolang
     end
 
     lines = translate_po_file_content(File.readlines(po_file), language)
-    File.open(po_file, "w+"){|f| f.write(lines*"\n") }
+    File.open(po_file, "w+") { |f| f.write(lines*"\n") }
+  end
+
+  def self.translate_json_into_new_file(file, language)
+    require 'json'
+    out = File.join(File.dirname(file), "#{language}.json")
+    old = JSON.load(File.read(file))
+    new = translate_hash(old, language)
+    File.open(out, "w+") { |f| f.write(JSON.dump(new)) }
+  end
+
+  def self.translate_hash(hash, language)
+    hash.inject({}) do |all, (k,v)|
+      all[k] = if v.is_a?(String)
+        translate(v, language)
+      elsif v.is_a?(Hash)
+        translate_hash(v, language)
+      else
+        v
+      end
+      all
+    end
   end
 
   def self.translate_po_file_content(lines, language)

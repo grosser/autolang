@@ -53,6 +53,36 @@ describe Autolang do
       Autolang.translate('hello %{name}', 'es').should == 'hola %{name}'
     end
   end
+
+  describe "CLI" do
+    def autolang(command)
+      result = `#{File.expand_path("../../bin/autolang", __FILE__)} #{command}`
+      raise result unless $?.success?
+      result
+    end
+
+    around { |test| Dir.mktmpdir { |dir| Dir.chdir(dir, &test) } }
+
+    describe 'translate pot file' do
+      it "translates all msgids" do
+        if system("which msginit")
+          File.open("xxx.pot", 'w'){|f| f.write(%Q{msgid "hello"\nmsgstr ""}) }
+          autolang "#{EasyTranslate.api_key} xxx.pot de"
+          File.read("de/de.pot").should include(%Q{msgid "hello"\nmsgstr "hallo"})
+        end
+      end
+    end
+
+    describe 'translate json file' do
+      it "translates all messages" do
+        en = "xxx/en.json"
+        FileUtils.mkdir("xxx")
+        File.open(en, 'w'){|f| f.write(%Q{{"foo":{"bar":"hello"}}}) }
+        autolang "#{EasyTranslate.api_key} #{en} de"
+        JSON.load(File.read("xxx/de.json")).should == {"foo" => {"bar" => "Hallo"}}
+      end
+    end
+  end
 end
 
 describe Autolang::TranslationEscaper do
@@ -83,19 +113,3 @@ describe Autolang::TranslationEscaper do
   end
 end
 
-describe 'translate pot file' do
-  let(:pot) { 'xxx.pot' }
-  let(:po) { 'de/de.po' }
-  around { |test| Dir.mktmpdir { |dir| Dir.chdir(dir, &test) } }
-
-  before do
-    File.open(pot, 'w'){|f| f.write(%Q{msgid "hello"\nmsgstr ""}) }
-  end
-
-  it "translates all msgids" do
-    if system("which msginit")
-      `./bin/autolang #{EasyTranslate.api_key} #{pot} de`
-      File.read(po).should include(%Q{msgid "hello"\nmsgstr "hallo"})
-    end
-  end
-end

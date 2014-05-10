@@ -4,6 +4,7 @@ PATH
     autolang (0.2.0)
       easy_translate
       i18n
+      json
 
 GEM
   remote: https://rubygems.org/
