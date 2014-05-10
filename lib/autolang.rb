@@ -1,5 +1,6 @@
-require 'rtranslate'
-require 'rtranslate/language'
+require 'easy_translate'
+
+EasyTranslate.api_key = "AIzaSyBtO-Bw8XrAQZd0XV7LWDRff5drLJajRYg"
 
 module Autolang
   def self.extract_msgid(text)
@@ -51,8 +52,7 @@ module Autolang
 
   def self.translate(text, language)
     e = TranslationEscaper.new(text)
-    @translator = Translate::RTranslate.new unless @translator
-    e.unescape @translator.translate(e.escaped, :from => 'ENGLISH', :to => language, :userip => '127.0.0.1')
+    e.unescape EasyTranslate.translate(e.escaped, :to => language)
   end
 
   # protects text from evil translation robots

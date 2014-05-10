@@ -9,5 +9,5 @@ Gem::Specification.new name, Autolang::VERSION do |s|
   s.files = `git ls-files lib MIT-LICENSE.txt`.split("\n")
   s.license = "MIT"
   s.add_runtime_dependency 'i18n'
-  s.add_runtime_dependency 'sishen-rtranslate'
+  s.add_runtime_dependency 'easy_translate'
 end
