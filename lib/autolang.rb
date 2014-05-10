@@ -1,7 +1,5 @@
 require 'easy_translate'
 
-EasyTranslate.api_key = "AIzaSyBtO-Bw8XrAQZd0XV7LWDRff5drLJajRYg"
-
 module Autolang
   def self.extract_msgid(text)
     return unless text =~ /^msgid/
@@ -9,7 +7,8 @@ module Autolang
     msgid.first.to_s.gsub(' | ','|')
   end
 
-  def self.translate_into_new_language(pot_file, language)
+  def self.translate_into_new_language(key, pot_file, language)
+    EasyTranslate.api_key = key
     po_file = File.join(File.dirname(pot_file), language, "#{language}.po")
 
     # create directory if it does not exist
@@ -23,6 +22,9 @@ module Autolang
     unless FileTest.exist?(po_file)
       puts "Generating new language file: #{po_file}"
       `msginit -i #{pot_file} -o #{po_file} -l #{language} --no-translator`
+      unless $?.success?
+        raise "Error during initialization, make sure gettext is installed"
+      end
     end
 
     lines = translate_po_file_content(File.readlines(po_file), language)
@@ -41,7 +43,7 @@ module Autolang
         puts msgstr
         puts '-'*80
 
-      #replace translation
+        #replace translation
       elsif line =~ /^msgstr/ and not msgstr.empty?
         line = "msgstr \"#{msgstr}\""
       end
@@ -52,7 +54,7 @@ module Autolang
 
   def self.translate(text, language)
     e = TranslationEscaper.new(text)
-    e.unescape EasyTranslate.translate(e.escaped, :to => language)
+    e.unescape EasyTranslate.translate(e.escaped, :to => language, :format => 'html')
   end
 
   # protects text from evil translation robots
@@ -70,7 +72,7 @@ module Autolang
       remove_placeholders(translation)
     end
 
-  protected
+    protected
 
     def escape_text
       @placeholders = []

@@ -7,12 +7,12 @@ Autolang
 Usage
 =====
 
-gem install autolang
+`gem install autolang`
 
 ```Bash
-autolang /path/to/app.pot <language-code>
-autolang /path/to/app.pot es
-autolang /path/to/app.json es
+autolang API_KEY /path/to/app.pot <language-code>
+autolang API_KEY /path/to/app.pot es
+autolang API_KEY /path/to/app.json es
 ```
 
 language-code are 2 letter [ISO 639](http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) codes<br/>

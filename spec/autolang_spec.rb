@@ -1,6 +1,9 @@
 require 'rake'
 require 'mocha'
 require 'autolang'
+require 'tmpdir'
+
+EasyTranslate.api_key = File.read("spec/API_KEY").strip
 
 describe Autolang do
   it "has a VERSION" do
@@ -23,15 +26,15 @@ describe Autolang do
 
   describe :translate do
     it "can work with frozen strings" do
-      Autolang.translate('hello'.freeze, 'es'.freeze).should == 'hola'
+      Autolang.translate('hello'.freeze, 'es'.freeze).should == '¡hola'
     end
 
     it "translates a word" do
-      Autolang.translate('hello', 'es').should == 'hola'
+      Autolang.translate('hello', 'es').should == '¡hola'
     end
 
     it "converts html entities" do
-      Autolang.translate('sales & tax', 'es').should == 'impuesto sobre ventas y'
+      Autolang.translate('sales & tax', 'es').should == 'ventas y el impuesto'
     end
 
     it "converts html entities back" do
@@ -43,7 +46,7 @@ describe Autolang do
     end
 
     it "translates with | " do
-      Autolang.translate('Auto|hello', 'es').should == 'hola'
+      Autolang.translate('Auto|hello', 'es').should == '¡hola'
     end
 
     it "translates with %{}" do
@@ -81,19 +84,18 @@ describe Autolang::TranslationEscaper do
 end
 
 describe 'translate pot file' do
-  delete = lambda{|_| `rm -rf spec/fixtures && mkdir spec/fixtures` }
-
-  before &delete
-  after &delete
+  let(:pot) { 'xxx.pot' }
+  let(:po) { 'de/de.po' }
+  around { |test| Dir.mktmpdir { |dir| Dir.chdir(dir, &test) } }
 
   before do
-    @pot = 'spec/fixtures/xxx.pot'
-    File.open(@pot, 'w'){|f| f.write(%Q{msgid "hello"\nmsgstr ""}) }
-    @po = 'spec/fixtures/de/de.po'
+    File.open(pot, 'w'){|f| f.write(%Q{msgid "hello"\nmsgstr ""}) }
   end
 
   it "translates all msgids" do
-    `./bin/autolang #{@pot} de`
-    File.read(@po).should include(%Q{msgid "hello"\nmsgstr "hallo"})
+    if system("which msginit")
+      `./bin/autolang #{EasyTranslate.api_key} #{pot} de`
+      File.read(po).should include(%Q{msgid "hello"\nmsgstr "hallo"})
+    end
   end
 end

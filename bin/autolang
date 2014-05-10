@@ -24,7 +24,7 @@ BANNER
   opts.on('-v', '--version','Show Version'){ puts Autolang::VERSION; exit}
 end.parse!
 
-if ARGV.size < 2 or not File.exist?(ARGV.first)
+if ARGV.size < 3 or not File.exist?(ARGV[1])
   puts "Usage instructions: autolang --help"
   exit
 end

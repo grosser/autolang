@@ -17,7 +17,7 @@ GEM
     i18n (0.6.9)
     json (1.8.1)
     mocha (0.9.12)
-    rake (0.8.7)
+    rake (10.3.1)
     rspec (2.14.1)
       rspec-core (~> 2.14.0)
       rspec-expectations (~> 2.14.0)
